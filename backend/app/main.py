@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base
-from .api import auth, users, transactions
+from .api import auth, users, transactions, transfer
+from .database import Base, engine
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -11,7 +11,7 @@ app = FastAPI(title="SmartSpend API")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Frontend URL
+    allow_origins=["http://localhost:3000"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,6 +21,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["transactions"])
+app.include_router(transfer.router, prefix="/api", tags=["transfer"])
 
 @app.get("/health")
 async def health_check():
